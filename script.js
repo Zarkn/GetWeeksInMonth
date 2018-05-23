@@ -1,4 +1,4 @@
-const startDay = 1; // [0 - Sunday, 1 - Monday, ...but more than 1 not tested]
+const startDay = 1; // [0 - Sunday, 1 - Monday, ... but more than 1 not tested]
 
 const normalizeDay = function (day) {
   if (day - startDay < 0) {
@@ -8,44 +8,45 @@ const normalizeDay = function (day) {
   }
 };
 const getWeeksInMonth = function(date) {
-	const first = new Date(date.getFullYear(), date.getMonth(), 1);
-	const last = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-	const checker = normalizeDay(first.getDay());
-	let last_check = checker;
-	let last_check_date = new Date(first);
+  const first_date = new Date(date.getFullYear(), date.getMonth(), 1);
+  const last_date = {
+    date: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+    check: {
+      need: normalizeDay(first_date.getDay()),
+      day: normalizeDay(first_date.getDay()),
+      date: new Date(first_date),
+    }
+  };
+
   const weeks = [];
   weeks.push([]);
-  
-	first.setDate(first.getDate() + 1);
 
-  for (let i = 0; i <= 100; i++) {
-    if (checker === normalizeDay(first.getDay())) {
+  first_date.setDate(first_date.getDate() + 1);
+
+  for (let i = 0; i < 100; i++) {
+    if (last_date.check.need === normalizeDay(first_date.getDay())) {
       weeks.push([]);
-      last_check = normalizeDay(first.getDay());
-      last_check_date = new Date(first);
-      //console.log(last_check, last_check_date);
+      last_date.check.day = normalizeDay(first_date.getDay());
+      last_date.check.date = new Date(first_date);
     }
-    if (first.getDate() + 1 <= last.getDate()) {
-      first.setDate(first.getDate() + 1);
-    } else { 
-    	break; 
-    }
-  } 
-	
-  if (last_check_date.getDate() < last.getDate()) {
-    if (normalizeDay(last.getDay()) < normalizeDay(last_check_date.getDay())) {
-      weeks.push([]);
+    if (first_date.getDate() + 1 <= last_date.date.getDate()) {
+      first_date.setDate(first_date.getDate() + 1);
+    } else {
+      break;
     }
   }
-  
+
+  if (last_date.check.date.getDate() < last_date.date.getDate() && normalizeDay(last_date.date.getDay()) < normalizeDay(last_date.check.date.getDay())) {
+    weeks.push([]);
+  }
+
   return weeks.length;
 };
 
-
+// Test
 for (let i = 0; i <= 11; i++) {
-	const month = [5, 5, 5, 6, 5, 5, 6, 5, 5, 5, 5, 6];
-	console.log(getWeeksInMonth(new Date(2018, i)) === month[i], i);
+    const year = 2018;
+    const names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const date = new Date(year, i);
+    document.write(getWeeksInMonth(new Date(date)) + ' weeks in ' + names[i] + ' ' + year + '<br>');
 }
-
-
-
